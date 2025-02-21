@@ -7,6 +7,7 @@ Makes use of [**cURL to Postman** module](https://github.com/postmanlabs/curl-to
 ## Usage
 > [!NOTE]
 > Use `--save FILE` flag to save the collection to a file
+> 
 > Use `--collection-name NAME` flag to set the collection name
 
 ### Convert from standalone cURL commands
@@ -41,17 +42,18 @@ curl_command_2
 #....
 ```
 
-> ![IMPORTANT]
+> [!IMPORTANT]
 > curl commands **must be in one line**
+> 
 > The script automatically removes `-L` flag and replaces `--data-raw` with `-d` flag
 
 Example file:
 ```bash
 # login
-curl -L 'http://localhost:3000/api/users/login' -X POST -H 'Content-Type: application/json' --data-raw '{   "email": "test@test.com",   "password": "testtest" }'
+curl 'http://localhost:3000/api/users/login' -X POST -H 'Content-Type: application/json' --data-raw '{   "email": "test@test.com",   "password": "testtest" }'
 
 # logout
-curl -L 'http://localhost:3000/api/users/logout' '-X' 'POST'
+curl 'http://localhost:3000/api/users/logout' '-X' 'POST'
 
 # get postman
 curl -X POST http://postman-echo.com/post -H 'Content-Type: application/json' -H 'Postman-Token: e6a3a3d7-4a55-4dd8-a080-6ad7e425a9b0' -H 'cache-control: no-cache' -d '{ a: 1, b: 2 }'
