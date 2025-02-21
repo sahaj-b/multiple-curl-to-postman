@@ -1,3 +1,4 @@
+# This fork adds .sh file conversion feature and supports setting collection name
 ## Multiple cURL requests to a Postman collection converter
 
 If you have multiple cURL requests that you want to import to Postman at once, this script will help you achieve that.
@@ -27,7 +28,7 @@ node index.js --curl "curl -X GET \
   }'"
 ```
 
-### Convert from .sh file (experimental)
+### Convert from .sh file
 ```bash
 node index.js --file path/to/file.sh
 ```
