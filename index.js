@@ -1,6 +1,7 @@
 const yargs = require("yargs"),
   fs = require("fs"),
   { convertToCollection } = require("./src/convert");
+const { validate } = require("curl-to-postmanv2");
 
 const argv = yargs
   .array("curl")
@@ -18,7 +19,16 @@ const argv = yargs
     default: "API Collection",
   }).argv;
 
-function validateCurlCommand(command) {
+function replaceAndValidateCurlCommand(command, replace = true) {
+  command = command.trim();
+  // Replace --data-raw with -d and remove -L argument
+  if (replace) {
+    command = command.replace(/--data-raw/g, "-d").replace(/\s+-L(\s|$)/g, " ");
+  }
+  if (!validate(command)) {
+    console.error("Error: Invalid curl command:", command);
+    process.exit(1);
+  }
   const allowedArgs = [
     "-A",
     "--user-agent",
@@ -37,7 +47,7 @@ function validateCurlCommand(command) {
 
   // Extract all arguments starting with - or --
   const args = command.match(/(?:\s|^)(-[-A-Za-z]+)/g);
-  if (!args) return true;
+  if (!args) return command;
 
   const invalidArgs = args
     .map((arg) => arg.trim())
@@ -50,33 +60,40 @@ function validateCurlCommand(command) {
     process.exit(1);
   }
 
-  return true;
+  return command;
 }
 
 function parseShFile(content) {
   const requests = [];
   const lines = content.split("\n");
   let name = "";
+  let command = "";
 
   lines.forEach((line) => {
     line = line.trim();
     if (line.startsWith("#")) {
+      if (command) {
+        command = replaceAndValidateCurlCommand(command);
+        requests.push({
+          name: name,
+          command: command,
+        });
+        command = "";
+      }
       name = line.substring(1).trim();
     } else {
       if (name && line) {
-        // Replace --data-raw with -d and remove -L argument
-        const modifiedCommand = line
-          .replace(/--data-raw/g, "-d")
-          .replace(/\s+-L(\s|$)/g, " ");
-        validateCurlCommand(modifiedCommand);
-        requests.push({
-          name: name,
-          command: modifiedCommand,
-        });
-        name = "";
+        command += line + "\n";
       }
     }
   });
+  if (command) {
+    command = replaceAndValidateCurlCommand(command);
+    requests.push({
+      name: name,
+      command: command,
+    });
+  }
 
   return requests;
 }
@@ -93,17 +110,14 @@ if (argv.file) {
   }
 } else if (argv.curl) {
   requests = argv.curl.map((command) => {
-    // const command = command
-    //   .replace(/--data-raw/g, "-d")
-    //   .replace(/\s+-L(\s|$)/g, " ");
-    validateCurlCommand(command);
+    // do not replace for --curl argument
+    command = replaceAndValidateCurlCommand(command, (replace = false));
     return {
       name: "curl",
       command: command,
     };
   });
 }
-
 convertToCollection(requests, argv["collection-name"], (err, collection) => {
   if (err) {
     console.log("Error occurred", err);
@@ -127,4 +141,3 @@ convertToCollection(requests, argv["collection-name"], (err, collection) => {
     );
   }
 });
-
