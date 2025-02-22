@@ -1,29 +1,40 @@
+# postman get
+curl -X GET \
+  'http://postman-echo.get?foo=bar&batman=joker' \
+  -H 'Postman-Token: 1a88e7fd-5b67-434c-aaf8-90ed9bfc3d46' \
+  -H 'cache-control: no-cache' \
+  -H 'content: application/json'
+
+# postman post
+curl -X POST \
+  http://postman-echo.com/post \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: e6a3a3d7-4a55-4dd8-a080-6ad7e425a9b0' \
+  -H 'cache-control: no-cache' \
+  -d '{
+        "a": 1,
+        "b": 2
+  }'
+
+# github get
+curl 'https://api.github.com/users/sahaj-b'
+
 # login
-curl -L 'http://localhost:3000/api/users/login' '-X' 'POST' '-H' 'Content-Type: application/json' '--data-raw' '{   "email": "tes@tes.com",   "password": "testtest" }'
+curl 'http://localhost:3000/api/users/login' -X POST -H Content-Type: application/json -d '{
+  "email": "test@test.com",
+  "password": "testtest"
+}'
 
 # logout
-curl -L 'http://localhost:3000/api/users/logout' '-X' 'POST'
-
-# register-anonymous
-curl -L 'http://localhost:3000/api/users/register-anonymous' '-X' 'POST'
-
-# register-with-email
-curl -L 'http://localhost:3000/api/users/register-with-email' '-X' 'POST' '-H' 'Content-Type: application/json' '--data-raw' '{   "email": "@test.com",   "password": "password123" }'
-
-# register-existing-with-email
-curl -L 'http://localhost:3000/api/users/register-existing-with-email' '-X' 'POST' '-H' 'Content-Type: application/json' '--data-raw' '{   "email": "test1@test.com",   "password": "password123" }'
-
-# refresh-token
-curl -L 'http://localhost:3000/api/users/refresh-token' '-X' 'POST'
-
-# info
-curl -L 'http://localhost:3000/api/api/users/me' '-X' 'GET'
+curl 'http://localhost:3000/api/users/logout' '-X' 'POST'
 
 # change-settings
-curl -L 'http://localhost:3000/api/users/me' '-X' 'PATCH' '-H' 'Content-Type: application/json' '--data-raw' '{   "password": "password12",   "newPassword":"password123",   "receivingPaused": false,   "name": "testname" }'
+curl 'http://localhost:3000/api/users/me' -X 'PATCH' -H 'Content-Type: application/json' -d '{
+  "password": "password12",
+  "newPassword":"password123",
+  "receivingPaused": false,
+  "name": "testname"
+}'
 
-# send-message
-curl -L 'http://localhost:3000/api/messages/send' '-X' 'GET' '-H' 'Content-Type: application/json' '--data-raw' '{   "recipientId": "",   "message": "Hello 1234 testing" }'
-
-# get-messages
-curl -L 'http://localhost:3000/api/messages/get' '-X' 'GET'
+# register-with-email
+curl 'http://localhost:3000/api/users/register-with-email' -X 'POST' -H 'Content-Type: application/json' -d '{ "email": "test@test.com", "password": "password123" }'
